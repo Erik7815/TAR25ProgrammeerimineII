@@ -49,6 +49,14 @@ namespace ShopTARpe25.ApplicationServices.Services
 
                         //domaini teha FileToApi
                         //FileToApi
+                        FileToApi path = new FileToApi
+                        {
+                            Id = Guid.NewGuid(),
+                            ExistingFilePath = uniqueFileName,
+                            SpaceshipId = domain.Id
+                        };
+
+                        _context.FileToApis.AddAsync(path);
                     }
                 }
             }

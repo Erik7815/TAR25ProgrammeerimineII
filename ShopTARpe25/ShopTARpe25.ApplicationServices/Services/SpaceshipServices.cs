@@ -37,7 +37,7 @@ namespace ShopTARpe25.ApplicationServices.Services
             domain.EnginePower = dto.EnginePower;
             domain.CreatedAt = DateTime.Now;
             domain.ModifiedAt = DateTime.Now;
-            _fileServices.FileToApi;
+            _fileServices.FilesToApi(dto, domain);
         
             
             //peame saama File teenusest välja kutsuda meetod, mis salvestab failid serverisse

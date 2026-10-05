@@ -50,11 +50,7 @@
                 <input asp-for="Files" class="form-control" />
             </div>
     </div>
-    @foreach(var file in Model.Files)
-        {
-            <partial name="_Images" model="file" />
-        }
-
+   
     <input asp-action="create" asp-controller="spaceship" type="submit" class="btn btn-primary" value="Create" />
     <a asp-action="Index" asp-controller="spaceship" class="btn btn-secondary">Back to List</a>
 

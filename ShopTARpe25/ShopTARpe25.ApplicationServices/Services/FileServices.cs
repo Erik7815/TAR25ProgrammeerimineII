@@ -52,7 +52,7 @@ namespace ShopTARpe25.ApplicationServices.Services
                         FileToApi path = new FileToApi
                         {
                             Id = Guid.NewGuid(),
-                            ExistingFilePath = uniqueFileName,
+                            ExistingFilePath = "/multipleFileUpload" + uniqueFileName,
                             SpaceshipId = domain.Id
                         };
 

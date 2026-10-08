@@ -42,8 +42,16 @@
                 <input asp-for="EnginePower" class="form-control" />
             </div>
         </div>
+        @foreach (var file in Model.Images)
+        {
+            <partial name="_Images" model="file" />
+            <input asp-action="removeImage" asp-controller="spaceship" asp-route-imageId="@file.ImageId"
+            type="submit" class="btn btn-danger" value="Remove Image"/>
+            <br />
+        }
 
         <input asp-action="Update" asp-controller="spaceship" type="submit" class="btn btn-success" value="Update" />
+        <input asp-action="Index" asp-controller="spaceship" type="submit" class="btn btn-success" value="Back" />
 
     </form>
 </div>

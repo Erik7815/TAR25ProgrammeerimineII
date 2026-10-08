@@ -13,18 +13,21 @@ namespace ShopTARpe25.Controllers
     {
         private readonly ISpaceshipServices _spaceshipService;
         private readonly ShopTARpe25Context _context;
+        private readonly IFileServices _fileService;
         //teha constructor et saaks kasutada teenust, mis on
         //defineeritud ISpaceshipServices liideses
         //lisage Context
         public SpaceshipController
             (
                 ISpaceshipServices spaceshipService,
-                ShopTARpe25Context context
+                ShopTARpe25Context context,
+                IFileServices fileservices
+            
             )
         {
             _spaceshipService = spaceshipService;
             _context = context;
-
+            _fileService = fileservices;
         }
 
 
@@ -136,6 +139,14 @@ namespace ShopTARpe25.Controllers
             {
                 return NotFound();
             }
+            var images = await _context.FileToApis
+                .Where(x => x.SpaceshipId == id)
+                .Select(y => new ImageViewModel
+                {
+                    FilePath = y.ExistingFilePath,
+                    ImageId = y.Id
+                }).ToArrayAsync();
+
 
             var vm = new SpaceshipUpdateViewModel();
 
@@ -147,7 +158,7 @@ namespace ShopTARpe25.Controllers
             vm.EnginePower = spaceship.EnginePower;
             vm.CreatedAt = spaceship.CreatedAt;
             vm.ModifiedAt = spaceship.ModifiedAt;
-
+            vm.Images.AddRange(images);
             return View(vm);
         }
 
@@ -203,8 +214,7 @@ namespace ShopTARpe25.Controllers
             vm.EnginePower = spaceship.EnginePower;
             vm.CreatedAt = spaceship.CreatedAt;
             vm.ModifiedAt = spaceship.ModifiedAt;
-            vm.Images.AddRange(images
-                );
+            vm.Images.AddRange(images);
 
             return View(vm);
         }
@@ -219,6 +229,22 @@ namespace ShopTARpe25.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveImage(ImageViewModel vm)
+        {
+            var dto = new FileToApiDto()
+            {
+                Id = vm.ImageId
+            };
+            var image = await _fileService.RemoveImageFromApi(dto);
+
+            if(image == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
             return RedirectToAction(nameof(Index));
         }
     }

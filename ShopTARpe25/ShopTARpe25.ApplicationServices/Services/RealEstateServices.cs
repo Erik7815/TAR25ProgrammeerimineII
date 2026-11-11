@@ -32,7 +32,7 @@ namespace ShopTARpe25.ApplicationServices.Services
             domain.UpdatedAt = DateTime.Now;
 
 
-            await _context.Spaceships.AddAsync(domain);
+            await _context.RealEstates.AddAsync(domain);
             await _context.SaveChangesAsync();
 
             return domain;
@@ -71,13 +71,10 @@ namespace ShopTARpe25.ApplicationServices.Services
             var result = await _context.RealEstates
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-
-            await
-            _context.RealEstates
-            .Where(x => x.Id == id)
-            .ExecuteDeleteAsync();
-
+            _context.RealEstates.Remove(result);
             await _context.SaveChangesAsync();
+
+            return result;
 
         }
     }

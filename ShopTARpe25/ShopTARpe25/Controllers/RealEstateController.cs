@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ShopTARpe25.Core.Dto;
 using ShopTARpe25.Core.ServiceInterface;
 using ShopTARpe25.Data;
@@ -57,6 +58,15 @@ namespace ShopTARpe25.Controllers
                 Address = vm.Address,
                 RoomNumber = vm.RoomNumber,
                 BuildingType = vm.BuildingType,
+                Files = vm.Files,
+                Image = vm.Image
+                .Select(x => new FileToDatabaseDto
+                {
+                    Id = x.ImageId,
+                    ImageData = x.ImageData,
+                    ImageTitle = x.ImageTitle,
+                    RealEstateId = x.RealEstateId
+                }).ToArray()
             };
 
             var result = await _realEstateService.Create(dto);

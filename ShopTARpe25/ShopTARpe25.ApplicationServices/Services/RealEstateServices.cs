@@ -10,13 +10,17 @@ namespace ShopTARpe25.ApplicationServices.Services
     public class RealEstateServices : IRealEstateServices
     {
         private readonly ShopTARpe25Context _context;
+        private readonly IFileServices _fileServices;
 
         public RealEstateServices
             (
-                ShopTARpe25Context context
+                ShopTARpe25Context context,
+                IFileServices fileServices
+            
             )
         {
             _context = context;
+            _fileServices = fileServices;
         }
 
         public async Task<RealEstate> Create(RealEstateDto dto)
@@ -30,7 +34,10 @@ namespace ShopTARpe25.ApplicationServices.Services
             domain.BuildingType = dto.BuildingType;
             domain.CreatedAt = DateTime.Now;
             domain.UpdatedAt = DateTime.Now;
-
+            if (dto.Files != null)
+            {
+                _fileServices.UploadFilesToDatabase(dto, domain);
+            }
 
             await _context.RealEstates.AddAsync(domain);
             await _context.SaveChangesAsync();
@@ -49,21 +56,21 @@ namespace ShopTARpe25.ApplicationServices.Services
 
         public async Task<RealEstate> Update(RealEstateDto dto)
         {
-            RealEstate spaceship = new();
+            RealEstate estate = new();
 
-            spaceship.Id = dto.Id;
-            spaceship.Area = dto.Area;
-            spaceship.Address = dto.Address;
-            spaceship.RoomNumber = dto. RoomNumber;
-            spaceship.BuildingType = dto.BuildingType;
-            spaceship.CreatedAt = dto.CreatedAt;
-            spaceship.UpdatedAt = DateTime.Now;
+            estate.Id = dto.Id;
+            estate.Area = dto.Area;
+            estate.Address = dto.Address;
+            estate.RoomNumber = dto. RoomNumber;
+            estate.BuildingType = dto.BuildingType;
+            estate.CreatedAt = dto.CreatedAt;
+            estate.UpdatedAt = DateTime.Now;
 
 
-            _context.RealEstates.Update(spaceship);
+            _context.RealEstates.Update(estate);
             await _context.SaveChangesAsync();
 
-            return spaceship;
+            return estate;
         }
 
         public async Task<RealEstate> Delete(Guid id)

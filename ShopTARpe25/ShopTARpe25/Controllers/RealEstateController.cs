@@ -5,6 +5,7 @@ using ShopTARpe25.Core.ServiceInterface;
 using ShopTARpe25.Data;
 using ShopTARpe25.Models.Realestate;
 using ShopTARpe25.Models.Spaceship;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ShopTARpe25.Controllers
 {
@@ -110,23 +111,25 @@ namespace ShopTARpe25.Controllers
         [HttpGet]
         public async Task<IActionResult> Update(Guid id)
         {
-            var spaceship = await _realEstateService.DetailsAsync(id);
+            var result = await _realEstateService.DetailsAsync(id);
 
-            if (spaceship == null)
+            if (result == null)
             {
                 return NotFound();
             }
+            RealEstateImageViewModel[] images = await FileFromDatabase(id);
 
             var vm = new RealEstateCreateUpdateViewModel();
 
-            vm.Id = spaceship.Id;
-            vm.Area = spaceship.Area;
-            vm.Address = spaceship.Address;
-            vm.RoomNumber = spaceship.RoomNumber  ;
-            vm.BuildingType = spaceship.BuildingType;
-            vm.CreatedAt = spaceship.CreatedAt;
-            vm.UpdatedAt = spaceship.UpdatedAt;
-  
+            vm.Id = result.Id;
+            vm.Area = result.Area;
+            vm.Address = result.Address;
+            vm.RoomNumber = result.RoomNumber  ;
+            vm.BuildingType = result.BuildingType;
+            vm.CreatedAt = result.CreatedAt;
+            vm.UpdatedAt = result.UpdatedAt;
+            vm.Image.AddRange(images);
+
 
             return View("CreateUpdate", vm);
         }
@@ -142,7 +145,16 @@ namespace ShopTARpe25.Controllers
                 RoomNumber = vm.RoomNumber,
                 BuildingType = vm.BuildingType,
                 CreatedAt = vm.CreatedAt,
-                UpdatedAt = vm.UpdatedAt
+                UpdatedAt = vm.UpdatedAt,
+                Image = vm.Image
+                .Select(x => new FileToDatabaseDto
+                 {
+                     Id = x.ImageId,
+                     ImageData = x.ImageData,
+                     ImageTitle = x.ImageTitle,
+                     RealEstateId = x.RealEstateId
+                 }).ToArray()
+
             };
 
             var result = await _realEstateService.Update(dto);
@@ -158,24 +170,26 @@ namespace ShopTARpe25.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var spaceship = await _realEstateService.DetailsAsync(id);
+            var result = await _realEstateService.DetailsAsync(id);
 
-            if (spaceship == null)
+            if (result == null)
             {
                 return NotFound();
             }
 
-          
+            RealEstateImageViewModel[] images = await FileFromDatabase(id);
+
 
             var vm = new RealEstateDeleteViewModel();
 
-            vm.Id = spaceship.Id;
-            vm.Area = spaceship.Area;
-            vm.Address = spaceship.Address;
-            vm.RoomNumber = spaceship.RoomNumber;
-            vm.BuildingType = spaceship.BuildingType;
-            vm.CreatedAt = spaceship.CreatedAt;
-            vm.UpdatedAt = spaceship.UpdatedAt;
+            vm.Id = result.Id;
+            vm.Area = result.Area;
+            vm.Address = result.Address;
+            vm.RoomNumber = result.RoomNumber;
+            vm.BuildingType = result.BuildingType;
+            vm.CreatedAt = result.CreatedAt;
+            vm.UpdatedAt = result.UpdatedAt;
+            vm.Images.AddRange(images);
 
             return View(vm);
         }

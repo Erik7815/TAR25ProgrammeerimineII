@@ -4,6 +4,7 @@ using ShopTARpe25.Core.Dto;
 using ShopTARpe25.Core.ServiceInterface;
 using ShopTARpe25.Data;
 using ShopTARpe25.Models.Realestate;
+using ShopTARpe25.Models.Spaceship;
 
 namespace ShopTARpe25.Controllers
 {
@@ -82,24 +83,26 @@ namespace ShopTARpe25.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
-            var spaceship = await _realEstateService.DetailsAsync(id);
+            var result = await _realEstateService.DetailsAsync(id);
 
-            if (spaceship == null)
+            if (result == null)
             {
                 return NotFound();
             }
 
+            //siin toimub info edasi liikumine dto-st viewModelini
             RealEstateImageViewModel[] images = await FileFromDatabase(id);
 
             var vm = new RealEstateDetailsViewModel();
 
-            vm.Id = spaceship.Id;
-            vm.Area = spaceship.Area;
-            vm.Address = spaceship.Address;
-            vm.RoomNumber = spaceship.RoomNumber;
-            vm.BuildingType = spaceship.BuildingType;
-            vm.CreatedAt = spaceship.CreatedAt;
-            vm.UpdatedAt = spaceship.UpdatedAt;
+            vm.Id = result.Id;
+            vm.Area = result.Area;
+            vm.Address = result.Address;
+            vm.RoomNumber = result.RoomNumber;
+            vm.BuildingType = result.BuildingType;
+            vm.CreatedAt = result.CreatedAt;
+            vm.UpdatedAt = result.UpdatedAt;
+            vm.Images.AddRange(images);
 
             return View(vm);
         }
@@ -200,6 +203,7 @@ namespace ShopTARpe25.Controllers
                 RealEstateId = y.Id,
                 ImageData = y.ImageData,
                 ImageTitle = y.ImageTitle,
+                //string.Format tähenda et see muudab andmed string anmdetüübiks
                 Image = string.Format("data:image/gif;base64, {0}", Convert.ToBase64String(y.ImageData))
 
             }).ToArrayAsync();

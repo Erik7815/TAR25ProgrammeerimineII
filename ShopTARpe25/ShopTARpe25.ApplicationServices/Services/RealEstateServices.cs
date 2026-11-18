@@ -65,7 +65,10 @@ namespace ShopTARpe25.ApplicationServices.Services
             estate.BuildingType = dto.BuildingType;
             estate.CreatedAt = dto.CreatedAt;
             estate.UpdatedAt = DateTime.Now;
-
+            if(dto.Files != null)
+            {
+                _fileServices.UploadFilesToDatabase(dto, estate);
+            }
 
             _context.RealEstates.Update(estate);
             await _context.SaveChangesAsync();
@@ -77,6 +80,15 @@ namespace ShopTARpe25.ApplicationServices.Services
         {
             var result = await _context.RealEstates
                 .FirstOrDefaultAsync(x => x.Id == id);
+
+            var images = await _context.FileToDatabases
+               .Where(x => x.RealEstateId == id)
+               .Select(y => new FileToDatabaseDto
+               {
+                   Id = y.Id,
+                   ImageTitle = y.ImageTitle,
+                   RealEstateId = y.RealEstateId
+               }).ToArrayAsync();
 
             _context.RealEstates.Remove(result);
             await _context.SaveChangesAsync();

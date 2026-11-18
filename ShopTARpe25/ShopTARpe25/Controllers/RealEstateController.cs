@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopTARpe25.Core.Dto;
 using ShopTARpe25.Core.ServiceInterface;
@@ -12,7 +13,8 @@ namespace ShopTARpe25.Controllers
     public class RealEstateController : Controller
     {
         private readonly ShopTARpe25Context _context;
-        private readonly IRealEstateServices _realEstateService; 
+        private readonly IRealEstateServices _realEstateService;
+        private readonly IFileServices _fileServices;
 
         public RealEstateController
             (
@@ -23,6 +25,7 @@ namespace ShopTARpe25.Controllers
         {
             _realEstateService = realEstateService;
             _context = context;
+            _fileServices = fileService;
         }
 
 
@@ -146,6 +149,7 @@ namespace ShopTARpe25.Controllers
                 BuildingType = vm.BuildingType,
                 CreatedAt = vm.CreatedAt,
                 UpdatedAt = vm.UpdatedAt,
+                Files = vm.Files,
                 Image = vm.Image
                 .Select(x => new FileToDatabaseDto
                  {
@@ -222,6 +226,23 @@ namespace ShopTARpe25.Controllers
 
             }).ToArrayAsync();
             return result;
+        }
+        [HttpPost]
+        public async Task<IActionResult> RemoveImage(RealEstateImageViewModel vm)
+        {
+            var dto = new FileToDatabaseDto()
+            {
+                Id = vm.ImageId
+            };
+            var image = await _fileServices.RemoveImageFromDatabase(dto);
+            var realEstateId = image.RealEstateId;
+            if (image == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction(nameof(Update), new { id = realEstateId });
+           
+
         }
     }
 }

@@ -135,12 +135,28 @@ namespace ShopTARpe25.ApplicationServices.Services
 
             var image = await _context.FileToDatabases
                 .FirstOrDefaultAsync(x => x.Id == dto.Id);
-            if (image == null)
-            {
-                return null;
-            }
+
+            _context.FileToDatabases.Remove(image);
             await _context.SaveChangesAsync();
 
-                    }
+            return image;
+
+        }
+        //kui kustutad mitu pilti siis peab olema massiivis e []
+        public async Task<FileToDatabase> RemoveImagesFromDatabase(FileToDatabaseDto[] dto)
+        {
+            foreach(var file in dto)
+            {
+                var image = await _context.FileToDatabases
+                    .Where(x => x.Id == )
+               .FirstOrDefaultAsync(x => x.Id == dto.Id);
+
+                _context.FileToDatabases.Remove(image);
+                await _context.SaveChangesAsync();
+            }
+            return null;
+
+        }
+
     }
 }

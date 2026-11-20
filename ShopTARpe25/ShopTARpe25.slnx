@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="ShopTAR25.RealEstateTest/ShopTARpe25.RealEstateTest.csproj" Id="00f7befe-150d-43b4-ba72-22f681462c0e" />
   <Project Path="ShopTARpe25.ApplicationServices/ShopTARpe25.ApplicationServices.csproj" />
   <Project Path="ShopTARpe25.Core/ShopTARpe25.Core.csproj" />
   <Project Path="ShopTARpe25.Data/ShopTARpe25.Data.csproj" />

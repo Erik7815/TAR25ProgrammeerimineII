@@ -76,8 +76,54 @@ namespace ShopTARpe25.RealEstateTest
             Assert.Equal(result.Id, deleteRealestate.Id);
 
         }
+        //mul on kaks ankeeti loodud ja ühe kustutan ära
+        //assertis võrdlen, kas need kaks on ühesugused
+        [Fact]
+        public async Task ShouldNot_DeleteByIdRealEstate_WhenDidNotDeleteRealEstate()
+        {
+        RealEstateDto dto = MockRealEstateData();
 
-        
+
+         var realestate = await Svc<IRealEstateServices>().Create(dto);
+         var realestate2 = await Svc<IRealEstateServices>().Create(dto);
+         var deleteRealestate = await Svc<IRealEstateServices>().Delete((Guid)realestate2.Id);
+
+
+        Assert.NotEqual(realestate.Id, deleteRealestate.Id);
+        }
+        //uuendab andmeid
+        [Fact]
+        public async Task Should_UpdateByIdRealestate_WhenRealEstate()
+        {
+            var guid = new Guid("988ed4e7 - 4d02 - 47cd - 8ffc - 3ce75f241d4b");
+            RealEstateDto dto = MockRealEstateData();
+
+            RealEstateDto domain = new();
+
+            domain.Id = guid;
+            domain.Area = 200.0;
+            domain.Address = "Update location";
+            domain.RoomNumber = 5;
+            domain.BuildingType = "Villa";
+            domain.CreatedAt = DateTime.UtcNow;
+            domain.UpdatedAt = DateTime.UtcNow;
+
+            //act
+             await Svc<IRealEstateServices>().Update(dto);
+
+            //assert, 5tk teha
+            Assert.Equal(domain.Id, guid);
+            Assert.NotEqual(dto.Area, domain.Area);
+            Assert.NotEqual(dto.RoomNumber, domain.RoomNumber);
+            Assert.DoesNotMatch(dto.RoomNumber.ToString(), domain.RoomNumber.ToString());
+            Assert.DoesNotMatch(dto.Address, domain.Address);
+        }
+        [Fact]
+        public async Task Should_UpdateRealEstate_WhenUpdateData()
+        {
+
+        }
+
         private RealEstateDto MockRealEstateData()
         {
            return new RealEstateDto 

@@ -95,7 +95,7 @@ namespace ShopTARpe25.RealEstateTest
         [Fact]
         public async Task Should_UpdateByIdRealestate_WhenRealEstate()
         {
-            var guid = new Guid("988ed4e7 - 4d02 - 47cd - 8ffc - 3ce75f241d4b");
+            var guid = new Guid("988ed4e7-4d02-47cd-8ffc-3ce75f241d4b");
             RealEstateDto dto = MockRealEstateData();
 
             RealEstateDto domain = new();
@@ -119,21 +119,89 @@ namespace ShopTARpe25.RealEstateTest
             Assert.DoesNotMatch(dto.Address, domain.Address);
         }
         [Fact]
-        public async Task Should_UpdateRealEstate_WhenUpdateData()
+        public async Task Should_UpdateRealEstate_WhenUpdateDataVersion2()
         {
 
+            RealEstateDto dto = MockRealEstateData2();
+            RealEstateDto updatedto = MockRealEstateDataUpdate();
+
+            var createreealestate = await Svc<IRealEstateServices>().Create(dto);
+            var result = await Svc<IRealEstateServices>().Update(updatedto);
+
+            Assert.DoesNotMatch(createreealestate.Address, result.Address);
+            Assert.NotEqual(createreealestate.UpdatedAt, result.UpdatedAt);
+
+
         }
+
+        //kasutame ankeeti kus kõik andmed on null
+        //tuleb kasutada create ja update
+        [Fact]
+        public async Task Should_UpdateRealEstate_WhenUpdateDataVersion3()
+        {
+            RealEstateDto dto = MockRealEstateData();
+            RealEstateDto updatedto = MockRealEstateData3();
+
+            var realEstate = await Svc<IRealEstateServices>().Create(dto);
+            var result = await Svc<IRealEstateServices>().Update(updatedto);
+
+            Assert.NotEqual(realEstate.Id, result.Id);
+            Assert.NotEqual(realEstate.Address, result.Address);
+
+        }
+
+
 
         private RealEstateDto MockRealEstateData()
         {
            return new RealEstateDto 
             {
                 Area = 120.5,
-                Address = "Test location",
+                Address = "Testaddress",
+                RoomNumber = 8,
+                BuildingType = "house",
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
+             
+        }
+        private RealEstateDto MockRealEstateData2()
+        {
+           return new RealEstateDto 
+            {
+                Area = 88.5,
+                Address = "Sample address",
                 RoomNumber = 3,
                 BuildingType = "house",
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
+            };
+             
+        }
+
+        private RealEstateDto MockRealEstateDataUpdate()
+        {
+           return new RealEstateDto 
+            {
+                Area = 100,
+                Address = "Woodland",
+                RoomNumber = 2,
+                BuildingType = "hidout",
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
+             
+        }
+        private RealEstateDto MockRealEstateData3()
+        {
+           return new RealEstateDto 
+            {
+                Area = null,
+                Address = null,
+                RoomNumber = 0,
+                BuildingType = null,
+                CreatedAt = null,
+                UpdatedAt = null
             };
              
         }
